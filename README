@@ -1,0 +1,51 @@
+=========
+Overview
+=========
+This is a c program demostrating a stateful file server
+
+
+=====
+Notes
+=====
+
+Assumptions made:  
+
+Maximum number of files possible in the virtual disk is 100.
+There is no maximum number of user (except indirectly by the number of possible files).  
+Files will be at most 64 blocks long.  A file's size is implicitly defined by the number of blocks allocated to it: when a block is allocated to a file, it is filled with null bytes and the null bytes are assumed to be part of the file.
+The maximum number of blocks per file can also be altered by changing the MAX_BLOCKS constant in server.c.  The virtual disk file will have to be rebuilt for the change to take effect.
+
+The virtual disk is define by one file only called disk.dat containing 3 segments for: a file table, a block table, and file data.  
+If the disk.dat file doesnot exist upon rpc call, it would be created, otherwise, the existing file would be used.  
+
+Each entry in the files table contains a username, a filename, the number of blocks used, and an array containing the list of block numbers.  
+The blocks segment is a list of bytes indicating if the block is currently in used or not.  
+
+The file data segment contains the disk blocks data in order of block number.  All files are set to all null bytes upon creation.  All rpc commands work by modifying these files.
+
+
+==================
+Build Instructions
+==================
+
+To build the program, run "make" within assignment root directory.  Makefile includes RPC gen command.
+
+==================
+Usage Instructions
+==================
+To run the server program, run "./server". 
+
+***
+To run the client program, run "./client hostname", where hostname is the name of the host running the server, e.g., "./client localhost" if the server is running on the same host.
+***
+
+The client program has the following functions available: 
+
+Open: Requires a filename. Opens the file with the given name. If file doesn't exist for loggedin user, create one. Returns file descriptor (fd) for open file, and -1 if error occurs.
+Read: Requires file descriptor, number of bytes to be read, and pointer to a buffer where content should be stored. Returns as content char of '0' if any error occurs.
+Write: Requires file descriptor, number of bytes to be written, and pointer to a buffer where content to be written is stored. Returns a message describing result of the operation.
+List: Returns a list of all files owned by logged in user
+Delete: Requires a filename. Deletes file with the given name owned by user.
+Close: Requires a file descriptor. 
+
+
